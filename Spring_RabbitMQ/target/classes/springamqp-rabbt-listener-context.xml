@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	  xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	  http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+	  http://www.springframework.org/schema/rabbit
+	  http://www.springframework.org/schema/rabbit/spring-rabbit-1.4.xsd">
+
+	<rabbit:connection-factory id="connectionFactory" host="localhost" 
+              username="guest" password="guest"/>
+
+	<rabbit:admin connection-factory="connectionFactory"/>
+	<rabbit:queue id="Spring AMQP Messaging Queue"/>
+	
+	<rabbit:topic-exchange id="Spring AMQP Messaging Exchanges" name="Spring AMQP Messaging Exchanges">
+		<rabbit:bindings>
+			<rabbit:binding queue="Spring AMQP Messaging Queue" pattern="12345">
+			</rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:topic-exchange>
+	
+	<bean id="asyncListener" class="com.mohit.amqp.SpringAMQPRabbitAyncListener"/>
+	<rabbit:listener-container id="myListenerContainer" connection-factory="connectionFactory">
+		<rabbit:listener ref="asyncListener" queue-names="Spring AMQP Messaging Queue"/>
+	</rabbit:listener-container>
+
+	
+
+	<!-- 
+	
+	<bean id="rabbitListenerContainerFactory"
+      class="org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory">
+    <property name="connectionFactory" ref="connectionFactory"/>
+    <property name="concurrentConsumers" value="3"/>
+    <property name="maxConcurrentConsumers" value="10"/>
+</bean>
+
+<bean id="rabbitListenerContainerFactory1"
+      class="org.springframework.amqp.rabbit.config.DirectRabbitListenerContainerFactory">
+    <property name="connectionFactory" ref="connectionFactory"/>
+    <property name="consumersPerQueue" value="3"/>
+</bean> -->
+
+</beans>
